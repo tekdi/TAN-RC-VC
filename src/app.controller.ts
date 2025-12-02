@@ -16,7 +16,7 @@ import * as puppeteer from 'puppeteer';
 
 @Controller('tan-vc')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService) { }
 
   @Post('issue-credential')
   async issueCredential(@Body() body: any) {
@@ -29,6 +29,7 @@ export class AppController {
     const credential = await this.appService.getCredential(id);
     const subject = credential.credentialSubject;
 
+    console.log("credential subject ", subject);
     // 1. Load Handlebars template
     const templatePath = path.join(__dirname, '..', 'views', 'credential.hbs');
     const templateContent = fs.readFileSync(templatePath, 'utf-8');

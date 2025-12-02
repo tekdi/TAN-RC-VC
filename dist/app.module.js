@@ -12,7 +12,13 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const axios_1 = require("@nestjs/axios");
 const config_1 = require("@nestjs/config");
+const jwt_auth_middleware_1 = require("./jwt.auth.middleware");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer
+            .apply(jwt_auth_middleware_1.JwtAuthMiddleware)
+            .forRoutes({ path: 'tan-vc/issue-credential', method: common_1.RequestMethod.POST }, { path: 'tan-vc/credentials/:id', method: common_1.RequestMethod.GET });
+    }
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
