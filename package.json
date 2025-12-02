@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "axios": "^1.12.2",
     "hbs": "^4.2.0",
+    "jsonwebtoken": "^9.0.2",
     "puppeteer": "^24.22.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
