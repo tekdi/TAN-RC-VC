@@ -29,7 +29,8 @@ let AppController = class AppController {
     }
     async getCredentialPdf(id, res) {
         const credential = await this.appService.getCredential(id);
-        const subject = credential.credentialSubject;
+        const subject = credential?.credentialSubject;
+        console.log('credential subject ', subject);
         const templatePath = path.join(__dirname, '..', 'views', 'credential.hbs');
         const templateContent = fs.readFileSync(templatePath, 'utf-8');
         const template = Handlebars.compile(templateContent);
@@ -57,6 +58,33 @@ let AppController = class AppController {
         });
         res.end(pdfBuffer);
     }
+    async getCredentialsById(id, res) {
+        if (!id || id.trim() === '') {
+            console.log('herer');
+            return res.status(400).json({
+                message: 'Credential id is mandatory',
+            });
+        }
+        else {
+            try {
+                const response = await this.appService.getCredential(id);
+                if (!response) {
+                    return res.status(404).json({
+                        message: 'Credential not found',
+                    });
+                }
+                return res.status(200).json({
+                    data: response,
+                });
+            }
+            catch (error) {
+                console.error('Get credential failed:', error);
+                return res.status(500).json({
+                    message: 'Failed to fetch credential',
+                });
+            }
+        }
+    }
 };
 exports.AppController = AppController;
 __decorate([
@@ -74,6 +102,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "getCredentialPdf", null);
+__decorate([
+    (0, common_1.Get)('credentials/details/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "getCredentialsById", null);
 exports.AppController = AppController = __decorate([
     (0, common_1.Controller)('tan-vc'),
     __metadata("design:paramtypes", [app_service_1.AppService])

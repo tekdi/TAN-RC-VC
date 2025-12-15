@@ -5,4 +5,5 @@ export declare class AppController {
     constructor(appService: AppService);
     issueCredential(body: any): Promise<any>;
     getCredentialPdf(id: string, res: Response): Promise<void>;
+    getCredentialsById(id: string, res: Response): Promise<Response<any, Record<string, any>>>;
 }

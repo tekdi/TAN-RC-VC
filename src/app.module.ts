@@ -14,8 +14,10 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(JwtAuthMiddleware)
-      .forRoutes({ path: 'tan-vc/issue-credential', method: RequestMethod.POST },
-        { path: 'tan-vc/credentials/:id', method: RequestMethod.GET }
+      .forRoutes(
+        { path: 'tan-vc/issue-credential', method: RequestMethod.POST },
+        { path: 'tan-vc/credentials/:id', method: RequestMethod.GET },
+        { path: 'tan-vc/credentials/details/:id', method: RequestMethod.GET },
       );
   }
 }

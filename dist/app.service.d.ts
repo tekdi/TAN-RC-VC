@@ -6,5 +6,6 @@ export declare class AppService {
     private readonly credential_schema_id;
     constructor(httpService: HttpService);
     issueCredential(body: any): Promise<any>;
+    validateIssueCredentialBody(body: any): Promise<void>;
     getCredential(id: string): Promise<any>;
 }

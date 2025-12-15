@@ -16,7 +16,7 @@ import * as puppeteer from 'puppeteer';
 
 @Controller('tan-vc')
 export class AppController {
-  constructor(private readonly appService: AppService) { }
+  constructor(private readonly appService: AppService) {}
 
   @Post('issue-credential')
   async issueCredential(@Body() body: any) {
@@ -27,9 +27,9 @@ export class AppController {
   @Get('credentials/:id')
   async getCredentialPdf(@Param('id') id: string, @Res() res: Response) {
     const credential = await this.appService.getCredential(id);
-    const subject = credential.credentialSubject;
+    const subject = credential?.credentialSubject;
 
-    console.log("credential subject ", subject);
+    console.log('credential subject ', subject);
     // 1. Load Handlebars template
     const templatePath = path.join(__dirname, '..', 'views', 'credential.hbs');
     const templateContent = fs.readFileSync(templatePath, 'utf-8');
@@ -75,5 +75,34 @@ export class AppController {
       'Content-Length': pdfBuffer.length,
     });
     res.end(pdfBuffer);
+  }
+  @Get('credentials/details/:id')
+  async getCredentialsById(@Param('id') id: string, @Res() res: Response) {
+    if (!id || id.trim() === '') {
+      console.log('herer');
+      return res.status(400).json({
+        message: 'Credential id is mandatory',
+      });
+    } else {
+      try {
+        const response = await this.appService.getCredential(id);
+
+        if (!response) {
+          return res.status(404).json({
+            message: 'Credential not found',
+          });
+        }
+
+        return res.status(200).json({
+          data: response,
+        });
+      } catch (error) {
+        console.error('Get credential failed:', error);
+
+        return res.status(500).json({
+          message: 'Failed to fetch credential',
+        });
+      }
+    }
   }
 }

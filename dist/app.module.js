@@ -17,7 +17,7 @@ let AppModule = class AppModule {
     configure(consumer) {
         consumer
             .apply(jwt_auth_middleware_1.JwtAuthMiddleware)
-            .forRoutes({ path: 'tan-vc/issue-credential', method: common_1.RequestMethod.POST }, { path: 'tan-vc/credentials/:id', method: common_1.RequestMethod.GET });
+            .forRoutes({ path: 'tan-vc/issue-credential', method: common_1.RequestMethod.POST }, { path: 'tan-vc/credentials/:id', method: common_1.RequestMethod.GET }, { path: 'tan-vc/credentials/details/:id', method: common_1.RequestMethod.GET });
     }
 };
 exports.AppModule = AppModule;
