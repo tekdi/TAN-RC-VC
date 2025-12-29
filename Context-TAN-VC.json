@@ -30,7 +30,8 @@
         "district": "schema:Text",
         "city": "schema:Text",
         "pincode": "schema:Text",
-        "service_details": "schema:Text"
+        "service_details": "schema:Text",
+        "documents": "schema:Text"
       }
     }
   }
