@@ -3,8 +3,11 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import * as Handlebars from 'handlebars';
 
 async function bootstrap() {
+  // ✅ Register helpers BEFORE app starts
+  Handlebars.registerHelper('eq', (a, b) => a === b);
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Resolve the assets folder based on project root

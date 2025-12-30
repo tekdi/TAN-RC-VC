@@ -30,33 +30,42 @@ let AppController = class AppController {
     async getCredentialPdf(id, res) {
         const credential = await this.appService.getCredential(id);
         const subject = credential?.credentialSubject;
-        console.log('credential subject ', subject);
+        if (Array.isArray(subject?.documents)) {
+            subject.documents = subject.documents.map((d, index) => ({
+                index: index + 1,
+                name: d.name,
+                url: d.url,
+                shortUrl: d.url && d.url.length > 40 ? d.url.slice(0, 37) + '...' : d.url,
+            }));
+        }
         const templatePath = path.join(__dirname, '..', 'views', 'credential.hbs');
-        const templateContent = fs.readFileSync(templatePath, 'utf-8');
-        const template = Handlebars.compile(templateContent);
-        const logoPath = path.resolve(__dirname, '..', '..', 'TAN-RC-VC', 'assets', 'logoWithoutBackground-B12Zn0N7.png');
-        const logoData = fs.readFileSync(logoPath).toString('base64');
-        const logoMimeType = 'image/png';
-        const logoBase64 = `data:${logoMimeType};base64,${logoData}`;
+        const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
+        const logoBase64 = `data:image/png;base64,${fs
+            .readFileSync(path.resolve(__dirname, '..', '..', 'TAN-RC-VC', 'assets', 'logoWithoutBackground-B12Zn0N7.png'))
+            .toString('base64')}`;
         const html = template({ credential, subject, logoBase64 });
         const browser = await puppeteer.launch({
-            headless: true,
+            headless: 'shell',
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
         const page = await browser.newPage();
+        await page.setViewport({ width: 1200, height: 800 });
+        await page.emulateMediaType('screen');
         await page.setContent(html, { waitUntil: 'networkidle0' });
+        await page.evaluateHandle('document.fonts.ready');
         const pdfBuffer = await page.pdf({
-            width: '210mm',
-            height: await page.evaluate(() => document.body.scrollHeight + 'px'),
+            format: 'A4',
             printBackground: true,
         });
         await browser.close();
-        res.set({
+        res.writeHead(200, {
             'Content-Type': 'application/pdf',
-            'Content-Disposition': `inline; filename=credential-${id}.pdf`,
             'Content-Length': pdfBuffer.length,
+            'Content-Disposition': 'attachment; filename="credential.pdf"',
+            'Content-Encoding': 'identity',
         });
         res.end(pdfBuffer);
+        return;
     }
     async getCredentialsById(id, res) {
         if (!id || id.trim() === '') {

@@ -4,7 +4,9 @@ const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 const path_1 = require("path");
 const fs_1 = require("fs");
+const Handlebars = require("handlebars");
 async function bootstrap() {
+    Handlebars.registerHelper('eq', (a, b) => a === b);
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const assetsPath = (0, path_1.join)(__dirname, '..', '..', 'TAN-RC-VC', 'assets');
     if (!(0, fs_1.existsSync)(assetsPath)) {
